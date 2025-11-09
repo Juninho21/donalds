@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+
 import QueueClient from "./QueueClient";
 // Botão de histórico removido conforme solicitação
 
@@ -40,10 +41,10 @@ export default async function QueuePage() {
         <h1 className="text-3xl font-bold">Fila de pedidos — {restaurant.name}</h1>
       </div>
       {/* Texto de atualização automática removido conforme solicitação */}
-      <QueueClient
+  <QueueClient
         initial={orders.map((o) => ({
           id: o.id,
-          status: o.status as any,
+          status: o.status === "PENDING" ? "PENDING" : "IN_PREPARATION",
           total: o.total,
           createdAt: o.createdAt.toISOString(),
           items: o.orderProducts.map((op) => ({ name: op.product?.name ?? "", quantity: op.quantity })),

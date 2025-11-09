@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState, useMemo, useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useMemo, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 
 type Product = {
@@ -42,8 +43,6 @@ export default function KioskClient({ categories, createOrderAction }: Props) {
   const [tableNumber, setTableNumber] = useState<number | "">("");
   const [state, formAction] = useActionState(createOrderAction, { success: false } as CreateOrderResult);
   const router = useRouter();
-
-  const allProducts = useMemo(() => categories.flatMap((c) => c.products), [categories]);
 
   const subtotal = useMemo(
     () => Object.values(cart).reduce((sum, item) => sum + item.product.price * item.quantity, 0),

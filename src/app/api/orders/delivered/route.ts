@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   const restaurant = await prisma.restaurant.findFirst({
@@ -23,7 +24,7 @@ export async function GET() {
   });
 
   const ids = orders.map((o) => o.id);
-  let itemsByDeliveredId = new Map<number, { name: string; quantity: number }[]>();
+  const itemsByDeliveredId = new Map<number, { name: string; quantity: number }[]>();
   if (ids.length > 0) {
     const rows = await prisma.$queryRaw<Array<{ deliveredOrderId: number; name: string; quantity: number }>>`
       SELECT dop."deliveredOrderId" AS "deliveredOrderId", p."name" AS "name", dop."quantity" AS "quantity"

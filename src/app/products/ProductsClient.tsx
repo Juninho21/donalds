@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Image from "next/image";
+import { useMemo, useState } from "react";
 
 type Product = { id: string; name: string; price: number; imageUrl: string; ingredients?: string[] };
 type Category = { id: string; name: string; products: Product[] };

@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
+
 import OrderStatusClient from "../OrderStatusClient";
 
-type Props = { params: { orderId: string } };
+type Props = { params: Promise<{ orderId: string }> };
 
 export default async function OrderStatusPage({ params }: Props) {
-  const id = Number(params.orderId);
+  const { orderId } = await params;
+  const id = Number(orderId);
   if (Number.isNaN(id)) {
     return (
       <div className="mx-auto max-w-4xl p-6">

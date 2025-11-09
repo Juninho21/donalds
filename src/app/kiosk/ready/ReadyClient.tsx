@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 
 type ReadyOrder = {
@@ -15,7 +16,6 @@ type ReadyOrder = {
 export default function ReadyClient({ initial }: { initial: ReadyOrder[] }) {
   const [orders, setOrders] = useState<ReadyOrder[]>(initial);
   const [error, setError] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [polling, setPolling] = useState(true);
   const refreshAbortRef = useRef<AbortController | null>(null);
   const refreshInFlightRef = useRef(false);
@@ -63,10 +63,9 @@ export default function ReadyClient({ initial }: { initial: ReadyOrder[] }) {
 
   useEffect(() => {
     if (!polling) {
-      // Aborta requisição em andamento e limpa estado de refresh
+      // Aborta requisição em andamento
       if (refreshAbortRef.current) refreshAbortRef.current.abort();
       refreshInFlightRef.current = false;
-      setIsRefreshing(false);
       return;
     }
 
@@ -82,9 +81,7 @@ export default function ReadyClient({ initial }: { initial: ReadyOrder[] }) {
       refreshInFlightRef.current = true;
       const controller = new AbortController();
       refreshAbortRef.current = controller;
-      setIsRefreshing(true);
       await refresh(controller.signal).finally(() => {
-        setIsRefreshing(false);
         refreshInFlightRef.current = false;
       });
       // Jitter de 20% para evitar thundering herd

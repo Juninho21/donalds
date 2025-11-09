@@ -39,7 +39,6 @@ function formatDateTime(iso: string) {
 export default function DeliveredClient({ initial }: { initial: DeliveredOrder[] }) {
   const [orders, setOrders] = useState<DeliveredOrder[]>(initial);
   const [error, setError] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [polling, setPolling] = useState(true);
   const refreshAbortRef = useRef<AbortController | null>(null);
   const refreshInFlightRef = useRef(false);
@@ -84,7 +83,6 @@ export default function DeliveredClient({ initial }: { initial: DeliveredOrder[]
     if (!polling) {
       if (refreshAbortRef.current) refreshAbortRef.current.abort();
       refreshInFlightRef.current = false;
-      setIsRefreshing(false);
       return;
     }
     let cancelled = false;
@@ -98,9 +96,7 @@ export default function DeliveredClient({ initial }: { initial: DeliveredOrder[]
       refreshInFlightRef.current = true;
       const controller = new AbortController();
       refreshAbortRef.current = controller;
-      setIsRefreshing(true);
       await refresh(controller.signal).finally(() => {
-        setIsRefreshing(false);
         refreshInFlightRef.current = false;
       });
       const base = backoffMsRef.current;

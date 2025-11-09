@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 
 type OrderSummary = {
@@ -11,12 +12,9 @@ type OrderSummary = {
   items: { name: string; quantity: number }[];
 };
 
-const currency = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-
 export default function QueueClient({ initial }: { initial: OrderSummary[] }) {
   const [orders, setOrders] = useState<OrderSummary[]>(initial);
   const [error, setError] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [polling, setPolling] = useState(true);
   const [now, setNow] = useState<number>(Date.now());
   const [processing, setProcessing] = useState<Set<number>>(new Set());
@@ -68,7 +66,6 @@ export default function QueueClient({ initial }: { initial: OrderSummary[] }) {
     if (!polling) {
       if (refreshAbortRef.current) refreshAbortRef.current.abort();
       refreshInFlightRef.current = false;
-      setIsRefreshing(false);
       return;
     }
     let cancelled = false;
@@ -82,9 +79,7 @@ export default function QueueClient({ initial }: { initial: OrderSummary[] }) {
       refreshInFlightRef.current = true;
       const controller = new AbortController();
       refreshAbortRef.current = controller;
-      setIsRefreshing(true);
       await refresh(controller.signal).finally(() => {
-        setIsRefreshing(false);
         refreshInFlightRef.current = false;
       });
       const base = backoffMsRef.current;
@@ -142,7 +137,7 @@ export default function QueueClient({ initial }: { initial: OrderSummary[] }) {
       setOrders((curr) => curr.map((o) => (o.id === id ? { ...o, status: updated.status } : o)));
       setError(null);
     } catch (e) {
-      setError("Não foi possível confirmar o pedido.");
+      setError(e instanceof Error ? e.message : "Não foi possível confirmar o pedido.");
     } finally {
       setProcessing((curr) => {
         const cp = new Set(curr);
@@ -171,7 +166,7 @@ export default function QueueClient({ initial }: { initial: OrderSummary[] }) {
       }
       setError(null);
     } catch (e) {
-      setError("Não foi possível finalizar o preparo.");
+      setError(e instanceof Error ? e.message : "Não foi possível finalizar o preparo.");
     } finally {
       setProcessing((curr) => {
         const cp = new Set(curr);

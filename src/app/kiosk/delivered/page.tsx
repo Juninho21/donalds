@@ -1,6 +1,6 @@
-import DeliveredClient from "./DeliveredClient";
-import Link from "next/link";
 import BackButton from "@/components/ui/BackButton";
+
+import DeliveredClient from "./DeliveredClient";
 
 export default function DeliveredPage() {
   return (

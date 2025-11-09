@@ -1,6 +1,8 @@
-import { prisma } from "@/lib/prisma";
-import ReadyClient from "./ReadyClient";
 import Link from "next/link";
+
+import { prisma } from "@/lib/prisma";
+
+import ReadyClient from "./ReadyClient";
 
 export default async function ReadyPage() {
   const restaurant = await prisma.restaurant.findFirst({

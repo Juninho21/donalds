@@ -1,12 +1,15 @@
+/* eslint-disable simple-import-sort/imports, @typescript-eslint/no-explicit-any */
+import { Prisma, type OrderStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { randomUUID } from "crypto";
+
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } },
+  ctx: any,
 ) {
+  const { params } = ctx as { params: { id: string } };
   const id = Number(params.id);
   if (Number.isNaN(id)) {
     return NextResponse.json({ error: "Pedido inválido" }, { status: 400 });
@@ -32,8 +35,9 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } },
+  ctx: any,
 ) {
+  const { params } = ctx as { params: { id: string } };
   const id = Number(params.id);
   if (Number.isNaN(id)) {
     return NextResponse.json({ error: "Pedido inválido" }, { status: 400 });
@@ -46,7 +50,7 @@ export async function PATCH(
     return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
   }
 
-  const status = (body as { status?: string }).status;
+  const status = (body as { status?: OrderStatus }).status;
   if (status !== "IN_PREPARATION" && status !== "PENDING" && status !== "FINISHED" && status !== "DELIVERED") {
     return NextResponse.json({ error: "Status não suportado" }, { status: 400 });
   }
@@ -139,7 +143,7 @@ export async function PATCH(
   try {
     const updated = await prisma.order.update({
       where: { id },
-      data: { status: status as any },
+      data: { status },
       select: { id: true, status: true, total: true, createdAt: true },
     });
     return NextResponse.json(updated);

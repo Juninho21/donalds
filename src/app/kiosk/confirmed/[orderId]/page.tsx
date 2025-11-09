@@ -1,10 +1,9 @@
 import { prisma } from "@/lib/prisma";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+
 import ConfirmedClient from "./ConfirmedClient";
 
 type Props = {
-  params: { orderId: string };
+  params: Promise<{ orderId: string }>;
 };
 
 const currency = new Intl.NumberFormat("pt-BR", {
@@ -13,7 +12,8 @@ const currency = new Intl.NumberFormat("pt-BR", {
 });
 
 export default async function OrderConfirmedPage({ params }: Props) {
-  const id = Number(params.orderId);
+  const { orderId } = await params;
+  const id = Number(orderId);
   if (Number.isNaN(id)) {
     return (
       <div className="mx-auto max-w-4xl p-6">

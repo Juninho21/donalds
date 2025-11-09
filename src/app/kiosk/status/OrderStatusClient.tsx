@@ -20,7 +20,7 @@ export default function OrderStatusClient({ orderId, initial }: Props) {
         setData({ status: json.status, total: json.total, consumptionMethod: json.consumptionMethod });
         setError(null);
       } catch (e) {
-        setError("Não foi possível atualizar o status.");
+        setError(e instanceof Error ? e.message : "Não foi possível atualizar o status.");
       }
     }, 5000);
 

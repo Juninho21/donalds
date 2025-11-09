@@ -1,10 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import ProductsClient from "./ProductsClient";
 
-const currency = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
+import ProductsClient from "./ProductsClient";
 
 const ProductPage = async () => {
   const restaurant = await prisma.restaurant.findFirst({
